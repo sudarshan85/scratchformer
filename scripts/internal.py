@@ -7,20 +7,20 @@ from torch import nn
 __all__ = ['LayerNormalization', 'FeedForwardBlock', 'MultiHeadAttention', 'ResidualConnection']
 
 class LayerNormalization(nn.Module):
-  def __init__(self, eps: float = 10**-6) -> None:
+  def __init__(self, eps: float = 10**-6):
     super().__init__()
     self.eps = eps
-    self.alpha = nn.Parameter(torch.ones(1)) # multiplictive 
-    self.bias = nn.Parameter(torch.zeros(0)) # additive
+    self.gamma = nn.Parameter(torch.ones(1)) # multiplictive 
+    self.beta = nn.Parameter(torch.zeros(1)) # additive
 
-  def forward(self, x) -> torch.Tensor:
+  def forward(self, x):
     mean = x.mean(dim=-1, keepdim=True)
     std = x.std(dim=-1, keepdim=True)
-    return self.alpha * (x - mean) / (std + self.eps) + self.bias
+    return self.gamma * (x - mean) / (std + self.eps) + self.beta
 
 # section 3.3 position-wise FFN
 class FeedForwardBlock(nn.Module):
-  def __init__(self, d_model: int, d_ff: int, dropout: float) -> None:
+  def __init__(self, d_model: int, d_ff: int, dropout: float):
     super().__init__()
     self.linear_1 = nn.Linear(d_model, d_ff) # W1 & b1
     self.dropout = nn.Dropout(dropout)
@@ -29,7 +29,7 @@ class FeedForwardBlock(nn.Module):
   def forward(self, x):
     # (batch, seq_len, d_model) -> (batch, seq_len, d_ff) -> (batch, seq_len, d_model)
     return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
-
+      
 class MultiHeadAttention(nn.Module):
   def __init__(self, d_model: int, h: int, dropout: float) -> None:
     super().__init__()
