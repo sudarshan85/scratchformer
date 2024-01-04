@@ -31,7 +31,7 @@ class FeedForwardBlock(nn.Module):
     return self.linear_2(self.dropout(torch.relu(self.linear_1(x))))
       
 class MultiHeadAttention(nn.Module):
-  def __init__(self, d_model: int, h: int, dropout: float) -> None:
+  def __init__(self, d_model: int, h: int, dropout: float):
     super().__init__()
     self.d_model = d_model
     self.h = h
@@ -58,7 +58,7 @@ class MultiHeadAttention(nn.Module):
 
     return (attention_scores @ value), attention_scores
 
-  def forward(self, q, k, v, mask):
+  def forward(self, q, k, v, mask=None):
     query = self.w_q(q) # (batch, seq_len, d_model) -> (batch, seq_len, d_model)
     key = self.w_k(k)
     value = self.w_v(v)
@@ -69,7 +69,7 @@ class MultiHeadAttention(nn.Module):
     # (batch, seq_len, d_model) -> (batch, seq_len, h, d_k) -> (batch, h, seq_len, d_k)
     query = query.view(query.shape[0], query.shape[1], self.h, self.d_k).transpose(1, 2)
     key = key.view(key.shape[0], key.shape[1], self.h, self.d_k).transpose(1, 2)
-    value = value.view(value.shape[0], value.shape[1], self.h, self.d_k).transpose(1, 2) 
+    value = value.view(value.shape[0], value.shape[1], self.h, self.d_k).transpose(1, 2)
 
     x, self.attention_scores = MultiHeadAttention.attention(query, key, value, mask, self.dropout)
     # (batch, h, seq_len, d_k) -> (batch, seq_len, h, d_k) -> (batch, seq_len, d_model)
@@ -77,7 +77,6 @@ class MultiHeadAttention(nn.Module):
 
     # (batch, seq_len, d_model) -> (batch, seq_len, d_model)
     return self.w_o(x)
-
 class ResidualConnection(nn.Module):
   def __init__(self, dropout: float):
     super().__init__()

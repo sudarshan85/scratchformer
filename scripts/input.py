@@ -7,7 +7,7 @@ from torch import nn
 __all__ = ['InputEmbeddings', 'PositionalEncoding']
 
 class InputEmbeddings(nn.Module):
-  def __init__(self, d_model, vocab_size):
+  def __init__(self, d_model: int, vocab_size: int):
     super().__init__()
     self.d_model = d_model
     self.vocab_size = vocab_size
@@ -20,7 +20,7 @@ class InputEmbeddings(nn.Module):
     return self.embedding(x) * torch.sqrt(torch.tensor(self.d_model).float())
 
 class PositionalEncoding(nn.Module):
-  def __init__(self, d_model, seq_len, dropout):
+  def __init__(self, d_model: int, seq_len: int, dropout: float):
     super().__init__()
     self.d_model = d_model
     self.seq_len = seq_len

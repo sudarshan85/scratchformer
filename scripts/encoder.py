@@ -4,10 +4,12 @@ import numpy as np
 import torch
 from torch import nn
 
+from internal import MultiHeadAttention, FeedForwardBlock, ResidualConnection, LayerNormalization
+
 __all__ = ['EncoderBlock', 'Encoder']
 
 class EncoderBlock(nn.Module):
-  def __init__(self, self_attention_block: MultiHeadAttention, feed_forward_block: FeedFowardBlock, dropout: float):
+  def __init__(self, self_attention_block: MultiHeadAttention, feed_forward_block: FeedForwardBlock, dropout: float):
     super().__init__()
     self.self_attention_block = self_attention_block
     self.feed_forward_block = feed_forward_block    

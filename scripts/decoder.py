@@ -4,10 +4,12 @@ import numpy as np
 import torch
 from torch import nn
 
+from internal import MultiHeadAttention, FeedForwardBlock, LayerNormalization, ResidualConnection
+
 __all__ = ['DecoderBlock', 'Decoder']
 
 class DecoderBlock(nn.Module):
-  def __init__(self, self_attention_block: MultiHeadAttention, cross_attention_block: MultiHeadAttention, feed_forward_block: FeedFowardBlock, dropout):
+  def __init__(self, self_attention_block: MultiHeadAttention, cross_attention_block: MultiHeadAttention, feed_forward_block: FeedForwardBlock, dropout):
     super().__init__()
     self.self_attention_block = self_attention_block
     self.cross_attention_block = cross_attention_block
@@ -26,7 +28,7 @@ class Decoder(nn.Module):
   def __init__(self, layers: nn.ModuleList):
     super().__init__()
     self.layers = layers
-    self.norm = LayerNormalization
+    self.norm = LayerNormalization()
 
   def forward(self, x, encoder_output, src_mask, target_mask):
     for layer in self.layers:
